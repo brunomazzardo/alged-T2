@@ -1,4 +1,4 @@
-package seiLa;
+package app;
 
 import leitura.LeituraCiaAerea;
 import leitura.LeituraGeral;
