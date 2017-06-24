@@ -12,30 +12,28 @@ import java.util.Scanner;
 import Model.Aeroporto;
 
 public class LeituraAeroporto {
-	
-	
 
-	public  static void CarregaDados() {
+	public  ArrayList<Aeroporto> CarregaDados() {
 		Path c1 = Paths.get("dat\\airports.dat");
-		ArrayList<Aeroporto> aeroportos= new ArrayList<>();
+		ArrayList<Aeroporto> aeroportos = new ArrayList<>();
 		try {
 			BufferedReader leitor = Files.newBufferedReader(c1, Charset.defaultCharset());
-			
+
 			String lAtual;
 			leitor.readLine();
-          
-           while ((lAtual = leitor.readLine()) != null){
-        	  
+
+			while ((lAtual = leitor.readLine()) != null) {
+
 				Scanner sc = new Scanner(lAtual);
 				sc.useDelimiter("[;\n]");
 
 				String iataCode = sc.next();
-				 sc.next();
-			 sc.next();
+				sc.next();
+				sc.next();
 				String airportName = sc.next();
 				String identificador = sc.next();
 
-				aeroportos.add(new Aeroporto(iataCode, airportName,identificador));
+				aeroportos.add(new Aeroporto(iataCode, airportName, identificador));
 
 				sc.close();
 			}
@@ -43,6 +41,7 @@ public class LeituraAeroporto {
 		} catch (IOException e) {
 
 		}
+		return aeroportos;
 
 	}
 
