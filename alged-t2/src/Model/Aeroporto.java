@@ -3,38 +3,42 @@ package Model;
 public class Aeroporto {
 	private String codigo;
 	private String nome;
+	private Pais pais;
 	
-	private String identificador;
-	
-	public Aeroporto(String codigo, String nome,String identificador) {
+	public Aeroporto(String codigo, String nome, Pais pais) {
+		super();
 		this.codigo = codigo;
 		this.nome = nome;
-		
-		this.identificador=identificador;
-				
+		this.pais = pais;
 	}
-	
+
 	public String getCodigo() {
 		return codigo;
 	}
-	
-	public String getIdentificador() {
-		return identificador;
-	}
 
-	public void setIdentificador(String identificador) {
-		this.identificador = identificador;
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
 	}
 
 	public String getNome() {
 		return nome;
 	}
-	
 
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public Pais getPais() {
+		return pais;
+	}
+
+	public void setPais(Pais pais) {
+		this.pais = pais;
+	}
 
 	@Override
 	public String toString() {
-		return "Aeroporto [codigo=" + codigo + ", nome=" + nome +  ", identificador=" + identificador
+		return "Aeroporto [codigo=" + codigo + ", nome=" + nome +  ", pais=" + pais.getCodigo()
 				+ "]";
 	}
 }
