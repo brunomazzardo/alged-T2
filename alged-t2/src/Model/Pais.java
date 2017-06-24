@@ -5,13 +5,13 @@ public class Pais implements  Comparable<Pais> {
 	String nome;
 
 	public Pais(String codigo, String nome) {
-		this.codigo = nome;
+		this.codigo = codigo;
 		this.nome = nome;
 
 	}
 
 	public String toString() {
-		return "Pais [codigo=" + codigo + ", nome=" + nome + "]";
+		return "\nPais [codigo=" + codigo + ", nome=" + nome + "]";
 	}
 
 	public String getCodigo() {

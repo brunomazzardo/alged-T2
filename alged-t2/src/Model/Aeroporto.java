@@ -38,7 +38,7 @@ public class Aeroporto {
 
 	@Override
 	public String toString() {
-		return "Aeroporto [codigo=" + codigo + ", nome=" + nome +  ", pais=" + pais.getCodigo()
+		return "\nAeroporto [codigo=" + codigo + ", nome=" + nome +  ", pais=" + pais.getCodigo()
 				+ "]";
 	}
 }

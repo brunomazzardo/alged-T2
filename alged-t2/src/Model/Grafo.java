@@ -20,52 +20,64 @@ import java.util.List;
 public class Grafo {
 
 
-	LinkedList<LinkedList<Adjacente>> la = new LinkedList<LinkedList<Adjacente>>();
+	LinkedList<LinkedList<Node>> la = new LinkedList<LinkedList<Node>>();
+	ArrayList<Aeroporto> lv = new ArrayList<Aeroporto>(); 
 	
-	static class Adjacente {
-		int peso;
-		int vDest;
-		public Adjacente(int peso, int vDest) {
+	static class Node {
+		Rota rota;
+		Aeroporto aeroporto;
+	
+		public Node(Rota rota, Aeroporto aeroporto) {
 			super();
-			this.peso = peso;
-			this.vDest = vDest;
+			this.rota = rota;
+			this.aeroporto = aeroporto;
 		}
+
 		@Override
 		public String toString() {
-			return "Adjacente [peso=" + peso + ", vDest=" + vDest + "]";
+			return "Node [rota=" + rota.getOrigem().getCodigo() + " - " + rota.getDestino().getCodigo() + "]";
 		}
-		
-		
 	}
 	
-	public Grafo(String nomeDoArquivo) throws IOException {
-		int tamanho;
-		String aresta[];
-		String linha;
-		try (BufferedReader bf = new BufferedReader(new FileReader(nomeDoArquivo))) {
-			tamanho = Integer.parseInt(bf.readLine());
-			for (int i = 0; i < tamanho; i++) {
-				la.add(new LinkedList<>());
-			}
+	//public Grafo(ArrayList<Rota> rotas, ArrayList<Aeroporto> aeroportos){
+	public Grafo(ArrayList<Rota> rotas){
+		for(int i=0; i<rotas.size(); i++){
+			Aeroporto origem = rotas.get(i).getOrigem();
+			Aeroporto destino = rotas.get(i).getDestino();
+			Rota rota = rotas.get(i);
 			
-			while ((linha = bf.readLine()) != null) {
-				aresta = linha.split(" ");
-				System.out.println(Arrays.toString(aresta));
-				addAresta(Integer.parseInt(aresta[0]), Integer.parseInt(aresta[1]), Integer.parseInt(aresta[2]));
+			if(origem != null && destino != null){
+				this.addAresta(origem, destino, rotas.get(i));
 			}
 		}
 	}
+	
+	public int findAirportIndex(String codigo){
+		for(int i=0; i<lv.size(); i++){
+			if((lv.size()-1 <= i) && lv.get(i).getCodigo().equals(codigo)){
+				return i;
+			}
+		}
+		return -1;
+	}
 
-	public void addAresta(int origem, int destino, int peso) {
-		la.get(origem).add(new Adjacente(peso, destino));
+	public void addAresta(Aeroporto origem, Aeroporto aeroporto, Rota rota) {
+		int origemIndex = this.findAirportIndex(origem.getCodigo());
 		
+		if(origemIndex < 0){
+			lv.add(origem);
+			la.add(new LinkedList<>());
+			origemIndex = la.size()-1;
+		}
+		
+		la.get(origemIndex).add(new Node(rota, aeroporto));
 	}
 		
 	public int grauDeSaida(int nodo){
 		return  la.get(nodo).size();
 	}
 	
-	public int grauDeEntrada(int nodo){
+	/*public int grauDeEntrada(int nodo){
 		int cont = 0;
 		for (int i = 0; i < la.size(); i++) {
 			for (int j = 0 ; j < la.get(i).size(); j++){
@@ -75,7 +87,7 @@ public class Grafo {
 			}
 		}
 		return cont;
-	}
+	}*/
 	
 	public int getArestas(){
 		int cont = 0;
@@ -85,7 +97,7 @@ public class Grafo {
 		return cont;
 	}
 	
-	public int getAdjacenteProximo(int nodo){
+	/*public int getAdjacenteProximo(int nodo){
 		if(la.get(nodo).size() == 0){
 			return -1;
 		}
@@ -98,7 +110,7 @@ public class Grafo {
 			}
 		}
 		return vDest;
-	}
+	}*/
 	
 	//	
 //	public List<Integer> maiorGrau(){
