@@ -7,8 +7,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
 
 /**
  * Grafo dirigido com arestas valoradas representado pela Lista de Adjacência.
@@ -23,7 +28,7 @@ public class Grafo {
 	LinkedList<LinkedList<Node>> la = new LinkedList<LinkedList<Node>>();
 	ArrayList<Aeroporto> lv = new ArrayList<Aeroporto>(); 
 	
-	static class Node {
+	static class Node implements Comparator<Node>{
 		private Rota rota;
 		private Aeroporto aeroporto;
 	
@@ -53,6 +58,16 @@ public class Grafo {
 		public String toString() {
 			return "Node [rota=" + rota.getOrigem().getCodigo() + " - " + rota.getDestino().getCodigo() + "]";
 		}
+
+		@Override
+		public int compare(Node n1, Node n2) {
+			if(n1.getRota().getDistancia() < n1.getRota().getDistancia()){
+				return -1;
+			}else if(n1.getRota().getDistancia() > n1.getRota().getDistancia()){
+				return 1;
+			}
+			return 0;
+		}
 	}
 	
 	/**
@@ -78,7 +93,7 @@ public class Grafo {
 	 */
 	public int findAirportIndex(String codigo){
 		for(int i=0; i<lv.size(); i++){
-			if((lv.size()-1 <= i) && lv.get(i).getCodigo().equals(codigo)){
+			if(lv.get(i).getCodigo().equals(codigo)){
 				return i;
 			}
 		}
@@ -141,6 +156,102 @@ public class Grafo {
 	 */
 	public void determinarRotaDeMenorCusto(String codigo1, String codigo2){
 		
+	}
+	
+	public void dijsktra(String codigo1, String codigo2){
+		Aeroporto origem = this.obterAeroportoPorCodigo(codigo1);
+		Aeroporto destino = this.obterAeroportoPorCodigo(codigo2);
+		if(origem == null || destino == null){
+			System.out.println("Aeroporto não encontrado.");
+			return;
+		}
+		ArrayList<Node> visitados = new ArrayList<Node>();
+		HashMap<Integer, Double> distancias = new HashMap<Integer, Double>();
+		distancias.put(this.findAirportIndex(origem.getCodigo()), 0.0);
+		
+		LinkedList<Node> adjacentes = this.obterAdjacentesDoMesmoPais(origem);		
+		Node u = new Node(null,origem);
+		this.dijsktraAux(u,adjacentes,visitados,distancias);
+		
+		/*
+		 Iterator it = distancias.entrySet().iterator();
+		    while (it.hasNext()) {
+		        Map.Entry pair = (Map.Entry)it.next();
+		        System.out.println(pair.getKey() + " = " + pair.getValue());
+		        it.remove(); // avoids a ConcurrentModificationException
+		    }
+		 */
+	}	
+	
+	public void dijsktraAux(Node node, LinkedList<Node> adjacentes, ArrayList<Node> visitados, HashMap<Integer, Double> distancias){
+		if(adjacentes.size() > 0 && !visitados.contains(adjacentes.get(0))){
+			visitados.add(node);
+			Node v = this.obterNodoComMenorDistancia(adjacentes);
+			adjacentes.remove(v);
+			
+			int vIndex = this.findAirportIndex(v.getAeroporto().getCodigo());
+			int uIndex = this.findAirportIndex(node.getAeroporto().getCodigo());
+			double vDist = this.obtemDistancia(distancias, vIndex);
+			double uDist = this.obtemDistancia(distancias, uIndex)+v.getRota().getDistancia();
+			if(vDist > uDist){
+				if(vDist == Double.MAX_VALUE){
+					distancias.put(vIndex, uDist);
+				}else{
+					distancias.put(vIndex, distancias.get(vIndex)+uDist);
+				}
+			}
+			
+			LinkedList<Node> adj = this.obterAdjacentesDoMesmoPais(v.getAeroporto());
+			this.dijsktraAux(v, adj, visitados, distancias);
+		}
+	}
+	
+	public double obtemDistancia(HashMap<Integer, Double> distancias, int key){
+		if(!distancias.containsKey(key)){
+			distancias.put(key, Double.MAX_VALUE);
+		}
+		return distancias.get(key);
+	}
+	
+	public Node obterNodoComMenorDistancia(LinkedList<Node> nodes){
+		Node n = nodes.get(0);
+		double d = nodes.get(0).getRota().getDistancia();
+		for(int i=1; i<nodes.size(); i++){
+			if(nodes.get(i).getRota().getDistancia() < d){
+				n = nodes.get(i);
+				d = nodes.get(i).getRota().getDistancia();
+			}
+		}
+		return n;
+	}
+	
+	public Aeroporto obterAeroportoPorCodigo(String codigo){
+		for(int i=0; i< this.lv.size(); i++ ){
+			if(lv.get(i).getCodigo().equals(codigo)){
+				return lv.get(i); 
+			}
+		}
+		return null;
+	}
+	
+	public ArrayList<Aeroporto> obterAeroportosDoMesmoPais(String pais){
+		ArrayList<Aeroporto> aeroportos = new ArrayList<Aeroporto>();	
+		for(int i=0; i< this.lv.size(); i++ ){
+			if(this.lv.get(i).getPais().getCodigo().equals(pais)){
+				aeroportos.add(this.lv.get(i));
+			}
+		}
+		return aeroportos;
+	}
+	
+	public LinkedList<Node> obterAdjacentesDoMesmoPais(Aeroporto origem){
+		LinkedList<Node> adj = this.la.get(this.findAirportIndex(origem.getCodigo()));
+		for(int i=0; i<adj.size(); i++){
+			if(!adj.get(i).getAeroporto().getPais().getCodigo().equals(origem.getPais().getCodigo())){
+				adj.remove(i);
+			}
+		}
+		return adj;
 	}
 	
 	/**

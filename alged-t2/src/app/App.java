@@ -67,8 +67,6 @@ public class App{
 
 		} catch (InputMismatchException e) {
 			System.out.println("Opção inválida.\nEncerrando.");
-		} catch (Exception e) {
-			System.out.println("\nOcorreu um erro:\n" + e.getMessage() + "\n");
 		}
 
 	}
@@ -90,8 +88,6 @@ public class App{
 			
 		} catch (InputMismatchException e) {
 			System.out.println("\nInformação inválida:\n");
-		} catch (Exception e) {
-			System.out.println("\nOcorreu um erro:\n" + e.getMessage() + "\n");
 		}
 	}
 
