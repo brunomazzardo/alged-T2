@@ -99,8 +99,17 @@ public class Grafo {
 			lv.add(aeroporto);
 			la.add(new LinkedList<>());
 		}
-		//Adiciona aeroporto destino na lista do aeroporto origem
-		la.get(origemIndex).add(new Node(rota, aeroporto));
+		//Adiciona aeroporto destino na lista do aeroporto origem		
+		boolean contains = false;
+		for(int i=0; i<this.la.get(origemIndex).size(); i++){
+			if(this.la.get(origemIndex).get(i).getAeroporto().getCodigo().equals(aeroporto.getCodigo())){
+				contains = true;
+			}
+		}
+		if(!contains){
+			la.get(origemIndex).add(new Node(rota, aeroporto));
+		}
+		
 	}
 		
 	/**
@@ -166,7 +175,9 @@ public class Grafo {
 		HashMap<String, ArrayList<Node>> caminho = new HashMap<String, ArrayList<Node>>();
 		LinkedList<Node> adjacentes = this.obterAdjacentesDoMesmoPais(origem);		
 		Node u = new Node(null,origem);
+		System.out.println("Mapeando rotas no país "+origem.getPais().getNome());
 		this.dijsktraAux(u,adjacentes,visitados,distancias,caminho);
+		System.out.println("Determinando melhor rota ...");
 		this.menorRota = this.obterCaminho(caminho, new Node(null,destino));
 	}	
 	
@@ -178,35 +189,31 @@ public class Grafo {
 	 * @param distancias
 	 * @param caminho
 	 */
-	public void dijsktraAux(Node node, LinkedList<Node> adjacentes, ArrayList<Node> visitados, HashMap<Integer, Double> distancias, HashMap<String, ArrayList<Node>> caminho){
-		if(adjacentes.size() > 0 && !visitados.contains(adjacentes.get(0))){
-			visitados.add(node);
-			Node v = this.obterNodoComMenorDistancia(adjacentes);
-			//adjacentes.remove(v);
-			
-			if(v.getAeroporto().getCodigo().equals("ABI")){
-				System.out.println("FOUND");
-			}
-			
-			int vIndex = this.findAirportIndex(v.getAeroporto().getCodigo());
-			int uIndex = this.findAirportIndex(node.getAeroporto().getCodigo());
-			double vDist = this.obtemDistancia(distancias, vIndex);
-			double uDist = this.obtemDistancia(distancias, uIndex)+v.getRota().getDistancia();
-			if(vDist > uDist){
-				ArrayList<Node> a = new ArrayList<>();
-				a.add(v);
-				a.add(node);
-				if(vDist == Double.MAX_VALUE){
-					distancias.put(vIndex, uDist);					
-					caminho.put(v.getAeroporto().getCodigo(),a);
-				}else{
-					distancias.put(vIndex, distancias.get(vIndex)+uDist);
-					caminho.put(v.getAeroporto().getCodigo(),a);
+	public void dijsktraAux(Node node, LinkedList<Node> adjacentes, ArrayList<Node> visitados, HashMap<Integer, Double> distancias, HashMap<String, ArrayList<Node>> caminho){		
+		visitados.add(node);		
+		for(int i=0; i<adjacentes.size(); i++){
+			Node v = this.obterNodoComMenorDistancia(adjacentes,visitados,node.getAeroporto().getPais());
+			if(v != null){						
+				int vIndex = this.findAirportIndex(v.getAeroporto().getCodigo());
+				int uIndex = this.findAirportIndex(node.getAeroporto().getCodigo());
+				double vDist = this.obtemDistancia(distancias, vIndex);
+				double uDist = this.obtemDistancia(distancias, uIndex)+v.getRota().getDistancia();
+				if(vDist > uDist){
+					ArrayList<Node> a = new ArrayList<>();
+					a.add(v);
+					a.add(node);
+					if(vDist == Double.MAX_VALUE){
+						distancias.put(vIndex, uDist);					
+						caminho.put(v.getAeroporto().getCodigo(),a);
+					}else{
+						distancias.put(vIndex, distancias.get(vIndex)+uDist);
+						caminho.put(v.getAeroporto().getCodigo(),a);
+					}
 				}
+				
+				LinkedList<Node> adj = this.obterAdjacentesDoMesmoPais(v.getAeroporto());
+				this.dijsktraAux(v, adj, visitados, distancias, caminho);
 			}
-			
-			LinkedList<Node> adj = this.obterAdjacentesDoMesmoPais(v.getAeroporto());
-			this.dijsktraAux(v, adj, visitados, distancias, caminho);
 		}
 	}
 	
@@ -251,11 +258,13 @@ public class Grafo {
 	 * @param nodes
 	 * @return
 	 */
-	public Node obterNodoComMenorDistancia(LinkedList<Node> nodes){
-		Node n = nodes.get(0);
-		double d = nodes.get(0).getRota().getDistancia();
-		for(int i=1; i<nodes.size(); i++){
-			if(nodes.get(i).getRota().getDistancia() < d){
+	public Node obterNodoComMenorDistancia(LinkedList<Node> nodes, ArrayList<Node> visistados, Pais pais){
+		Node n = null;
+		double d = Double.MAX_VALUE;
+		for(int i=0; i<nodes.size(); i++){
+			if(nodes.get(i).getAeroporto().getPais().getCodigo().equals(pais.getCodigo())
+					&& nodes.get(i).getRota().getDistancia() < d 
+					&& !visistados.contains(nodes.get(i))){
 				n = nodes.get(i);
 				d = nodes.get(i).getRota().getDistancia();
 			}

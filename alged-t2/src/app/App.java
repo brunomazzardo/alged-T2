@@ -98,7 +98,7 @@ public class App{
 						System.out.print("Companhia: "+n.getRota().getCia().getNome());
 						System.out.println(" - Distancia entre os aeroportos: "+n.getRota().getDistancia());
 					}
-		            System.out.println("Aeroporto: "+n.getAeroporto().getNome() +" ("+n.getAeroporto().getPais().getCodigo()+")");
+		            System.out.println("Aeroporto: "+n.getAeroporto().getCodigo()+" - "+n.getAeroporto().getNome() +" ("+n.getAeroporto().getPais().getCodigo()+")");
 		        }
 			}			
 		} catch (InputMismatchException e) {
