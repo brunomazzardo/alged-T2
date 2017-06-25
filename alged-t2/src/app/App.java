@@ -148,11 +148,23 @@ public class App{
 	 * o número total de voos que chegam no aeroporto.
 	 */
 	public static void verificarProbabilidadeDeCongestionamento(){
-		/**
-		 * TODO pedir o país e verificar o maior grau de entrada de todos
-		 * os aeroportos desse país, o que tiver o maior grau é o que tem 
-		 * a maior probabilidade de ter congestionamento
-		 */
+		try{
+			Scanner s = new Scanner(System.in);
+			System.out.println("\nInforme o código de um pais:\n");
+			String nome = s.next();
+			
+			Aeroporto a = grafo.verificarProbabilidadeDeCongestionamento(nome);
+			if(a == null){
+				System.out.println("Este país não possui aeroportos");
+			}else{
+				System.out.println("O aeroporto "+a.getNome()+" possui a maior probabilidade de congestionamento"
+						+ "no futuro \n com o total de "+a.getQuantidadeVoosChegada()+" voos que chegam.");
+			}
+		} catch (InputMismatchException e) {
+			System.out.println("\nInformação inválida:\n");
+		} catch (Exception e) {
+			System.out.println("\nOcorreu um erro:\n" + e.getMessage() + "\n");
+		}
 	}
 
 }

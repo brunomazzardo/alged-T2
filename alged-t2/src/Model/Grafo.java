@@ -112,17 +112,23 @@ public class Grafo {
 		return  la.get(nodo).size();
 	}
 	
-	/*public int grauDeEntrada(int nodo){
-		int cont = 0;
-		for (int i = 0; i < la.size(); i++) {
-			for (int j = 0 ; j < la.get(i).size(); j++){
-				if(la.get(i).get(j).vDest == nodo){
-					cont++;
+	/**
+	 * Obtem grau de entrada de um nodo
+	 * @param nodo
+	 * @return
+	 */
+	public int grauDeEntrada(int nodo){
+		int grau = 0;
+		Aeroporto a = this.lv.get(nodo);
+		for(int i=0; i<this.la.size(); i++){
+			for(int j=0; j<this.la.get(i).size(); j++){
+				if(this.la.get(i).get(j).getAeroporto().getCodigo().equals(a.getCodigo())){
+					grau++;
 				}
 			}
 		}
-		return cont;
-	}*/
+		return grau;
+	}
 	
 	public int getArestas(){
 		int cont = 0;
@@ -292,6 +298,26 @@ public class Grafo {
 	 */
 	public void verificarRotaExclusiva(String ciaNome){
 		
+	}
+	
+	/**
+	 * Obtem o maior grau de entrada entre os aeroporto de um determinado pais
+	 * @param pais
+	 */
+	public Aeroporto verificarProbabilidadeDeCongestionamento(String pais){
+		Aeroporto aeroporto = null;
+		int maiorGrauEntrada = 0;
+		for(int i=0; i<this.lv.size(); i++){
+			if(this.lv.get(i).getPais().getCodigo().equals(pais)){
+				int grauEntrada = this.grauDeEntrada(i);
+				if(grauEntrada > maiorGrauEntrada){
+					maiorGrauEntrada = grauEntrada;
+					aeroporto = this.lv.get(i);
+				}
+			}
+		}
+		aeroporto.setQuantidadeVoosChegada(maiorGrauEntrada);
+		return aeroporto;
 	}
 	
 	@Override

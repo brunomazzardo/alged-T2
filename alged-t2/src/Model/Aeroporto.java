@@ -4,6 +4,8 @@ public class Aeroporto {
 	private String codigo;
 	private String nome;
 	private Pais pais;
+	private int quantidadeVoosChegada;
+	private int quantidadeVoosPartida;
 	
 	public Aeroporto(String codigo, String nome, Pais pais) {
 		super();
@@ -34,6 +36,22 @@ public class Aeroporto {
 
 	public void setPais(Pais pais) {
 		this.pais = pais;
+	}
+
+	public int getQuantidadeVoosChegada() {
+		return quantidadeVoosChegada;
+	}
+
+	public void setQuantidadeVoosChegada(int quantidadeVoosChegada) {
+		this.quantidadeVoosChegada = quantidadeVoosChegada;
+	}
+
+	public int getQuantidadeVoosPartida() {
+		return quantidadeVoosPartida;
+	}
+
+	public void setQuantidadeVoosPartida(int quantidadeVoosPartida) {
+		this.quantidadeVoosPartida = quantidadeVoosPartida;
 	}
 
 	@Override
