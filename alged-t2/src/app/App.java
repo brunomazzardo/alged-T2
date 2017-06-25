@@ -4,6 +4,8 @@ import leitura.LeituraCiaAerea;
 import leitura.LeituraGeral;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 import Model.Aeroporto;
@@ -11,6 +13,7 @@ import Model.CiaAerea;
 import Model.Grafo;
 import Model.Pais;
 import Model.Rota;
+import Model.Node;
 
 public class App{
 	
@@ -85,7 +88,19 @@ public class App{
 			System.out.println("\nInforme o código do segundo aeroporto:\n");
 			String id2 = s.next();
 			grafo.determinarRotaDeMenorCusto(id1,id2);
-			
+			LinkedList<Node> menorRota = grafo.getMenorRota();
+			if(menorRota == null){
+				System.out.println("\nNão há uma rota entre esses dois aeroportos\n");
+			}else{
+				//Exibe rota
+				for (Node n: menorRota) {
+					if(n.getRota() != null){
+						System.out.print("Companhia: "+n.getRota().getCia().getNome());
+						System.out.println(" - Distancia entre os aeroportos: "+n.getRota().getDistancia());
+					}
+		            System.out.println("Aeroporto: "+n.getAeroporto().getNome() +" ("+n.getAeroporto().getPais().getCodigo()+")");
+		        }
+			}			
 		} catch (InputMismatchException e) {
 			System.out.println("\nInformação inválida:\n");
 		}
