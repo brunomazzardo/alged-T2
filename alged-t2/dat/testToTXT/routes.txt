@@ -1,0 +1,7 @@
+# origem; destino; distacia; cia
+AA;AB;100.000;AH
+AA;AC;200.000;AH
+AB;AD;100.000;2I
+AC;AD;250.000;AH
+AC;AE;50.000;AH
+AE;AF;90.000;AH

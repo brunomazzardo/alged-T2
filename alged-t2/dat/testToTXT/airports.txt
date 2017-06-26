@@ -1,0 +1,7 @@
+# iata code; latitude; longitude; airport name; country
+AA;-17.3542;-145.4961;Anaa Airport;BR
+AB;31.0733;33.8358;El Arish International Airport;BR
+AC;36.8222;7.8094;Annaba Airport;BR
+AD;29.7275;-85.0274;Apalachicola Regional Airport;BR
+AE;16.1917;52.1750;Al Ghaidah International Airport;BR
+AF;53.7417;91.3850;Abakan Airport;BR

@@ -16,7 +16,7 @@ import Model.Rota;
 public class LeituraRota {
 
 	public  ArrayList<Rota> CarregaDados(ArrayList<Aeroporto> aeroportos, ArrayList<CiaAerea> cias) {
-		Path c1 = Paths.get("dat\\routes.dat");
+		Path c1 = Paths.get("dat\\testToTXT\\routes.txt");
 		ArrayList<Rota> rotas = new ArrayList<>();
 		try {
 			BufferedReader leitor = Files.newBufferedReader(c1, Charset.defaultCharset());
