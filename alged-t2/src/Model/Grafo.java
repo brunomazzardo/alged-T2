@@ -326,24 +326,33 @@ public class Grafo {
 	}
 
 	public boolean verificaAutonomiaVoo(double autonomia, String codCIA) {
-int quantVoosCia=0;
-int quantVoosCiaConsegue=0;
+		int quantVoosCia = 0;
+		int quantVoosCiaConsegue = 0;
+		double distTotal = 0;
 
 		for (int i = 0; i < la.size(); i++) {
 			for (int j = 0; j < la.get(i).size(); j++) {
-	
+
 				if (la.get(i).get(j).getRota().getCia().getCodigo().equals(codCIA)) {
 					quantVoosCia++;
-					if(la.get(i).get(j).getRota().getDistancia()<autonomia){
+					distTotal += la.get(i).get(j).getRota().getDistancia();
+					if (la.get(i).get(j).getRota().getDistancia() < autonomia) {
 						quantVoosCiaConsegue++;
+
 					}
-						
+
 				}
 			}
 		}
-		
-		if(quantVoosCia*0.70>quantVoosCiaConsegue)
+
+		/*
+		 * É necessario ainda implementas frufrus para o método,como quanto
+		 * faltou para completar,quantidades de rotas que conseguiu e arrumar a
+		 * formatação dos dados.É Nois.
+		 */
+		if (quantVoosCia * 0.70 > quantVoosCiaConsegue)
 			return false;
+
 		return true;
 	}
 
