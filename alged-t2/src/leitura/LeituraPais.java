@@ -17,7 +17,7 @@ import Model.Rota;
 public class LeituraPais {
 
 	public  ArrayList<Pais> CarregaDados() {
-		Path c1 = Paths.get("dat\\testToTXT\\countries.txt");
+		Path c1 = Paths.get("dat\\countries.dat");
 		ArrayList<Pais> paises = new ArrayList<>();
 		try {
 			BufferedReader leitor = Files.newBufferedReader(c1, Charset.defaultCharset());

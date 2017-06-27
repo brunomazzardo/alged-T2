@@ -15,7 +15,7 @@ import Model.Pais;
 public class LeituraAeroporto {
 
 	public  ArrayList<Aeroporto> CarregaDados(ArrayList<Pais> paises) {
-		Path c1 = Paths.get("dat\\testToTXT\\airports.txt");
+		Path c1 = Paths.get("dat\\airports.dat");
 		ArrayList<Aeroporto> aeroportos = new ArrayList<>();
 		try {
 			BufferedReader leitor = Files.newBufferedReader(c1, Charset.defaultCharset());

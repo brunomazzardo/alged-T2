@@ -117,7 +117,7 @@ public class App{
 			System.out.println("\nInforme o nome de uma companhia aérea:\n");
 			String nome = s.next();
 			
-			grafo.verificarRotaExclusiva(nome);
+			grafo.verificarRotaExclusiva(nome,"HTI","HID");
 		} catch (InputMismatchException e) {
 			System.out.println("\nInformação inválida:\n");
 		} catch (Exception e) {
@@ -134,13 +134,25 @@ public class App{
 	 * avião e informar se a compra será realizada ou não.
 	 */
 	public static void verificarAutonomiaDeVoo(){
-		/**
-		 * TODO pedir o nome da companhia que vai comprar o avião
-		 * e pedir a autonomia de voo desse aviao, então fazer a 
-		 * mágica para descobrir se esta companhia deve ou não
-		 * comprar o avião		 
-		 */
+		
+		try{
+			Scanner s = new Scanner(System.in);
+			System.out.println("\nInforme o código da ciaAerea:\n");
+			String codCIA = s.next();
+			System.out.println("\nInforme a autonomia do avião:\n");
+			double id2 = s.nextDouble();
+			boolean foi=grafo.verificaAutonomiaVoo(id2, codCIA);
+		
+			if(foi){
+				System.out.println("\nConseguiu\n");
+			}else{
+				System.out.println("Putz,não deu");
+			}			
+		} catch (InputMismatchException e) {
+			System.out.println("\nInformação inválida:\n");
+		}
 	}
+	
 
 	/**
 	 * Qual o aeroporto, de um determinado país, que possui a maior
