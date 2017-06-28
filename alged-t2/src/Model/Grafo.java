@@ -1,18 +1,9 @@
 package Model;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
 
 /**
  * Grafo dirigido com arestas valoradas representado pela Lista de Adjacência.
@@ -313,16 +304,24 @@ public class Grafo {
 	}
 
 	/**
-	 * Verifica se uma cia aérea faz uma rota exclusiva
+	 * Verifica a possibilidade de fazer uma rota entre dois aeroportodos usando
+	 * somente uma companhia aerea;
 	 * 
 	 * @param aeroporto1
 	 * @param aeroporto2
 	 * @param ciaNome
 	 */
 	public void verificarRotaExclusiva(String ciaNome, String aeroporto1, String aeroporto2) {
-		Aeroporto aero1 = lv.get(findAirportIndex(aeroporto1));
-		Aeroporto aero2 = lv.get(findAirportIndex(aeroporto2));
-
+		Aeroporto origem = this.obterAeroportoPorCodigo(aeroporto1);
+		Aeroporto destino = this.obterAeroportoPorCodigo(aeroporto2);
+		if (origem == null || destino == null) {
+			System.out.println("Aeroporto não encontrado.");
+			return;
+		}
+		/*
+		 * Esperando o ricardo arrumar o dijsktra para poder fazer essa,já que
+		 * vou reaproveitar o método dele
+		 */
 	}
 
 	public boolean verificaAutonomiaVoo(double autonomia, String codCIA) {
