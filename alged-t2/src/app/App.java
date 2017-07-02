@@ -118,8 +118,29 @@ public class App{
 			Scanner s = new Scanner(System.in);
 			System.out.println("\nInforme o nome de uma companhia aérea:\n");
 			String nome = s.next();
+		
+			System.out.println("\nInforme o nome de uma origem:\n");
+			String origem= s.next();
 			
-			grafo.verificarRotaExclusiva(nome,"HTI","HID");
+			System.out.println("\nInforme o nome de um destino:\n");
+			String destino = s.next();
+			
+			ArrayList<Node> rota = grafo.verificarRotaExclusiva(nome,origem,destino);
+			if(rota == null || rota.size() == 0){
+				System.out.println("\nNão há uma rota entre esses dois aeroportos\n");
+			}else{
+				//Exibe rota
+				boolean exibirDistancia = false;
+				for(int i=rota.size()-1; i>=0; i--){
+					if(exibirDistancia){
+						System.out.print("Companhia: "+rota.get(i).getRota().getCia().getNome());
+						System.out.println(" - Distancia entre os aeroportos: "+rota.get(i).getRota().getDistancia());
+					}
+					System.out.println("Aeroporto: "+rota.get(i).getAeroporto().getCodigo()+" - "+rota.get(i).getAeroporto().getNome() +" ("+rota.get(i).getAeroporto().getPais().getCodigo()+")");
+					exibirDistancia = true;
+					
+				}				
+			}			
 		} catch (InputMismatchException e) {
 			System.out.println("\nInformação inválida:\n");
 		} catch (Exception e) {

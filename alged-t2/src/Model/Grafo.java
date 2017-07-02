@@ -340,6 +340,7 @@ public class Grafo {
 		}
 		return adj;
 	}
+	
 
 	/**
 	 * Verifica a possibilidade de fazer uma rota entre dois aeroportodos usando
@@ -349,18 +350,46 @@ public class Grafo {
 	 * @param aeroporto2
 	 * @param ciaNome
 	 */
-	public void verificarRotaExclusiva(String ciaNome, String aeroporto1, String aeroporto2) {
-		Aeroporto origem = this.obterAeroportoPorCodigo(aeroporto1);
-		Aeroporto destino = this.obterAeroportoPorCodigo(aeroporto2);
-		if (origem == null || destino == null) {
-			System.out.println("Aeroporto não encontrado.");
-			return;
-		}
-		/*
-		 * Esperando o ricardo arrumar o dijsktra para poder fazer essa,já que
-		 * vou reaproveitar o método dele
-		 */
+	public ArrayList<Node> verificarRotaExclusiva(String ciaNome, String aeroporto1, String aeroporto2) {
+	
+			Aeroporto origem = this.obterAeroportoPorCodigo(aeroporto1);
+			Aeroporto destino = this.obterAeroportoPorCodigo(aeroporto2);
+			if (origem == null || destino == null) {
+				System.out.println("Aeroporto não encontrado.");
+				return null;
+			}
+			int origemIndex = this.findAirportIndex(origem.getCodigo());
+			int destinoIndex = this.findAirportIndex(destino.getCodigo());
+			
+			ArrayList<Caminho> caminhos = this.dijsktra2(origem, destino, origemIndex, destinoIndex);
+			return this.obterMenorRota(caminhos, origemIndex, destinoIndex);
+		
 	}
+	public ArrayList<Node> obteRotaMesmaCIA(ArrayList<Caminho> caminhos, int origemIndex, int destinoIndex){
+		ArrayList<Node> vertices = new ArrayList<Node>();
+		vertices.add(lv.get(destinoIndex));
+		int predecessor = 0;
+		//Obter predecessor do vertice destino
+		for(int i=0; i<caminhos.size(); i++){
+			if(caminhos.get(i).vertice == destinoIndex){
+				predecessor = caminhos.get(i).predecessor;
+				break;
+			}
+		}
+		//Obter vertices ate a origem
+		while(predecessor != origemIndex){
+			for(int i=0; i<caminhos.size(); i++){
+				if(caminhos.get(i).vertice == predecessor){
+					int index = caminhos.get(i).vertice;
+					vertices.add(lv.get(index));
+					predecessor = caminhos.get(i).predecessor; 
+				}
+			}
+		}
+		vertices.add(this.lv.get(origemIndex));
+		return vertices;
+	}
+	
 
 	public boolean verificaAutonomiaVoo(double autonomia, String codCIA) {
 		int quantVoosCia = 0;
