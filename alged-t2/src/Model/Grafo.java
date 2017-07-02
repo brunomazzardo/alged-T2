@@ -126,6 +126,7 @@ public class Grafo {
 			}
 		}
 		if (!contains) {
+			aeroporto.updateQuantidadeVoosChegada();
 			la.get(origemIndex).add(new Node(rota, aeroporto));
 		}
 	}
@@ -402,7 +403,7 @@ public class Grafo {
 		int maiorGrauEntrada = 0;
 		for (int i = 0; i < this.lv.size(); i++) {
 			if (this.lv.get(i).getAeroporto().getPais().getCodigo().equals(pais)) {
-				int grauEntrada = this.grauDeEntrada(i);
+				int grauEntrada = this.lv.get(i).getAeroporto().getQuantidadeVoosChegada();
 				if (grauEntrada > maiorGrauEntrada) {
 					maiorGrauEntrada = grauEntrada;
 					aeroporto = this.lv.get(i).getAeroporto();

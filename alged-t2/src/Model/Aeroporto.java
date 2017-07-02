@@ -45,6 +45,10 @@ public class Aeroporto {
 	public void setQuantidadeVoosChegada(int quantidadeVoosChegada) {
 		this.quantidadeVoosChegada = quantidadeVoosChegada;
 	}
+	
+	public void updateQuantidadeVoosChegada() {
+		this.quantidadeVoosChegada++;
+	}
 
 	public int getQuantidadeVoosPartida() {
 		return quantidadeVoosPartida;
@@ -52,6 +56,10 @@ public class Aeroporto {
 
 	public void setQuantidadeVoosPartida(int quantidadeVoosPartida) {
 		this.quantidadeVoosPartida = quantidadeVoosPartida;
+	}
+	
+	public void updateQuantidadeVoosPartida() {
+		this.quantidadeVoosPartida++;
 	}
 
 	@Override
