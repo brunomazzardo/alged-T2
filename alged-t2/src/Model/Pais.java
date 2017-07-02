@@ -1,6 +1,6 @@
 package Model;
 
-public class Pais implements  Comparable<Pais> {
+public class Pais {
 	String codigo;
 	String nome;
 
@@ -29,10 +29,4 @@ public class Pais implements  Comparable<Pais> {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-
-	@Override
-	public int compareTo(Pais p) {
-		return codigo.compareTo(p.codigo);
-	}
-
 }

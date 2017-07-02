@@ -87,19 +87,21 @@ public class App{
 			String id1 = s.next();
 			System.out.println("\nInforme o código do segundo aeroporto:\n");
 			String id2 = s.next();
-			grafo.determinarRotaDeMenorCusto(id1,id2);
-			LinkedList<Node> menorRota = grafo.getMenorRota();
-			if(menorRota == null){
+			ArrayList<Node> rota = grafo.determinarRotaDeMenorCusto(id1,id2);
+			if(rota == null || rota.size() == 0){
 				System.out.println("\nNão há uma rota entre esses dois aeroportos\n");
 			}else{
 				//Exibe rota
-				for (Node n: menorRota) {
-					if(n.getRota() != null){
-						System.out.print("Companhia: "+n.getRota().getCia().getNome());
-						System.out.println(" - Distancia entre os aeroportos: "+n.getRota().getDistancia());
+				boolean exibirDistancia = false;
+				for(int i=rota.size()-1; i>=0; i--){
+					if(exibirDistancia){
+						System.out.print("Companhia: "+rota.get(i).getRota().getCia().getNome());
+						System.out.println(" - Distancia entre os aeroportos: "+rota.get(i).getRota().getDistancia());
 					}
-		            System.out.println("Aeroporto: "+n.getAeroporto().getCodigo()+" - "+n.getAeroporto().getNome() +" ("+n.getAeroporto().getPais().getCodigo()+")");
-		        }
+					System.out.println("Aeroporto: "+rota.get(i).getAeroporto().getCodigo()+" - "+rota.get(i).getAeroporto().getNome() +" ("+rota.get(i).getAeroporto().getPais().getCodigo()+")");
+					exibirDistancia = true;
+					
+				}				
 			}			
 		} catch (InputMismatchException e) {
 			System.out.println("\nInformação inválida:\n");

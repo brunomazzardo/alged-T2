@@ -13,11 +13,40 @@ import java.util.LinkedList;
  */
 public class Grafo {
 
-	LinkedList<LinkedList<Node>> la = new LinkedList<LinkedList<Node>>();
-	ArrayList<Aeroporto> lv = new ArrayList<Aeroporto>();
+	private LinkedList<LinkedList<Node>> la = new LinkedList<LinkedList<Node>>();
+	private ArrayList<Node> lv = new ArrayList<Node>();
 
-	LinkedList<Node> menorRota;
-	HashMap<Integer, Double> distancias;
+	private LinkedList<Node> menorRota;
+	private HashMap<Integer, Double> distancias;
+	
+	private class Caminho{
+		int vertice;
+		double peso;
+		int predecessor;
+		
+		public Caminho(int vertice, double peso, int predecessor) {
+			super();
+			this.vertice = vertice;
+			this.peso = peso;
+			this.predecessor = predecessor;
+		}
+	}
+
+	public LinkedList<LinkedList<Node>> getLa() {
+		return la;
+	}
+
+	public void setLa(LinkedList<LinkedList<Node>> la) {
+		this.la = la;
+	}
+
+	public ArrayList<Node> getLv() {
+		return lv;
+	}
+
+	public void setLv(ArrayList<Node> lv) {
+		this.lv = lv;
+	}
 
 	public LinkedList<Node> getMenorRota() {
 		return menorRota;
@@ -60,7 +89,7 @@ public class Grafo {
 	 */
 	public int findAirportIndex(String codigo) {
 		for (int i = 0; i < lv.size(); i++) {
-			if (lv.get(i).getCodigo().equals(codigo)) {
+			if (lv.get(i).getAeroporto().getCodigo().equals(codigo)) {
 				return i;
 			}
 		}
@@ -81,12 +110,12 @@ public class Grafo {
 		// Se o aeroporto de origem não existe na L.V o adiciona na L.V e
 		// adciona uma lista na L.A
 		if (origemIndex < 0) {
-			lv.add(origem);
+			lv.add(new Node(rota, aeroporto));
 			la.add(new LinkedList<>());
 			origemIndex = la.size() - 1;
 		}
 		if (destinoIndex < 0) {
-			lv.add(aeroporto);
+			lv.add(new Node(rota, aeroporto));
 			la.add(new LinkedList<>());
 		}
 		// Adiciona aeroporto destino na lista do aeroporto origem
@@ -99,7 +128,6 @@ public class Grafo {
 		if (!contains) {
 			la.get(origemIndex).add(new Node(rota, aeroporto));
 		}
-
 	}
 
 	/**
@@ -120,10 +148,10 @@ public class Grafo {
 	 */
 	public int grauDeEntrada(int nodo) {
 		int grau = 0;
-		Aeroporto a = this.lv.get(nodo);
+		Node a = this.lv.get(nodo);
 		for (int i = 0; i < this.la.size(); i++) {
 			for (int j = 0; j < this.la.get(i).size(); j++) {
-				if (this.la.get(i).get(j).getAeroporto().getCodigo().equals(a.getCodigo())) {
+				if (this.la.get(i).get(j).getAeroporto().getCodigo().equals(a.getAeroporto().getCodigo())) {
 					grau++;
 				}
 			}
@@ -145,130 +173,139 @@ public class Grafo {
 	 * @param codigo1
 	 * @param codigo2
 	 */
-	public void determinarRotaDeMenorCusto(String codigo1, String codigo2) {
+	public ArrayList<Node> determinarRotaDeMenorCusto(String codigo1, String codigo2) {
 		Aeroporto origem = this.obterAeroportoPorCodigo(codigo1);
 		Aeroporto destino = this.obterAeroportoPorCodigo(codigo2);
 		if (origem == null || destino == null) {
 			System.out.println("Aeroporto não encontrado.");
-			return;
-		}
-		this.dijsktra(origem, destino);
-	}
-
-	/**
-	 * Algoritimo de dijsktra recursivo
-	 * 
-	 * @param origem
-	 * @param destino
-	 */
-	public void dijsktra(Aeroporto origem, Aeroporto destino) {
-		ArrayList<Node> visitados = new ArrayList<Node>();
-		this.distancias = new HashMap<Integer, Double>();
-		distancias.put(this.findAirportIndex(origem.getCodigo()), 0.0);
-
-		HashMap<String, ArrayList<Node>> caminho = new HashMap<String, ArrayList<Node>>();
-		LinkedList<Node> adjacentes = this.obterAdjacentesDoMesmoPais(origem);
-		Node u = new Node(null, origem);
-		System.out.println("Mapeando rotas no país " + origem.getPais().getNome());
-		this.dijsktraAux(u, adjacentes, visitados, distancias, caminho);
-		System.out.println("Determinando melhor rota ...");
-		this.menorRota = this.obterCaminho(caminho, new Node(null, destino));
-	}
-
-	/**
-	 * Metodo auxiliar para o algoritimo de dijsktra recursivo
-	 * 
-	 * @param node
-	 * @param adjacentes
-	 * @param visitados
-	 * @param distancias
-	 * @param caminho
-	 */
-	public void dijsktraAux(Node node, LinkedList<Node> adjacentes, ArrayList<Node> visitados,
-			HashMap<Integer, Double> distancias, HashMap<String, ArrayList<Node>> caminho) {
-		visitados.add(node);
-		for (int i = 0; i < adjacentes.size(); i++) {
-			Node v = this.obterNodoComMenorDistancia(adjacentes, visitados, node.getAeroporto().getPais());
-			if (v != null) {
-				int vIndex = this.findAirportIndex(v.getAeroporto().getCodigo());
-				int uIndex = this.findAirportIndex(node.getAeroporto().getCodigo());
-				double vDist = this.obtemDistancia(distancias, vIndex);
-				double uDist = this.obtemDistancia(distancias, uIndex) + v.getRota().getDistancia();
-				if (vDist > uDist) {
-					ArrayList<Node> a = new ArrayList<>();
-					a.add(v);
-					a.add(node);
-					if (vDist == Double.MAX_VALUE) {
-						distancias.put(vIndex, uDist);
-						caminho.put(v.getAeroporto().getCodigo(), a);
-					} else {
-						distancias.put(vIndex, distancias.get(vIndex) + uDist);
-						caminho.put(v.getAeroporto().getCodigo(), a);
-					}
-				}
-
-				LinkedList<Node> adj = this.obterAdjacentesDoMesmoPais(v.getAeroporto());
-				this.dijsktraAux(v, adj, visitados, distancias, caminho);
-			}
-		}
-	}
-
-	/**
-	 * Obtem o caminho mais curto dado o vertice destino e os caminhos
-	 * 
-	 * @param caminho
-	 * @param destino
-	 * @return
-	 */
-	public LinkedList<Node> obterCaminho(HashMap<String, ArrayList<Node>> caminho, Node destino) {
-		LinkedList<Node> rota = new LinkedList<Node>();
-		Node step = destino;
-		if (caminho.get(destino.getAeroporto().getCodigo()) == null) {
 			return null;
 		}
-		rota.add(caminho.get(step.getAeroporto().getCodigo()).get(0));
-		while (caminho.get(step.getAeroporto().getCodigo()) != null) {
-			step = caminho.get(step.getAeroporto().getCodigo()).get(1);
-			rota.add(step);
-		}
-		Collections.reverse(rota);
-		return rota;
+		int origemIndex = this.findAirportIndex(origem.getCodigo());
+		int destinoIndex = this.findAirportIndex(destino.getCodigo());
+		
+		ArrayList<Caminho> caminhos = this.dijsktra2(origem, destino, origemIndex, destinoIndex);
+		return this.obterMenorRota(caminhos, origemIndex, destinoIndex);
 	}
 
 	/**
-	 * Obtem distancia entre dois aeroportos (vertices) em um hashmap usando o
-	 * indice do aerporto na L.V (lista de vertices), se o aeroporto nao esta
-	 * nesse hashmap o adiciona com distancia de Double.MAX_VALUE
 	 * 
-	 * @param distancias
-	 * @param key
+	 * @param pais
 	 * @return
 	 */
-	public double obtemDistancia(HashMap<Integer, Double> distancias, int key) {
-		if (!distancias.containsKey(key)) {
-			distancias.put(key, Double.MAX_VALUE);
-		}
-		return distancias.get(key);
-	}
-
-	/**
-	 * Obtem nodo como a rota que tem a menor distancia entre os nodos
-	 * adjacentes
-	 * 
-	 * @param nodes
-	 * @return
-	 */
-	public Node obterNodoComMenorDistancia(LinkedList<Node> nodes, ArrayList<Node> visistados, Pais pais) {
-		Node n = null;
-		double d = Double.MAX_VALUE;
-		for (int i = 0; i < nodes.size(); i++) {
-			if (nodes.get(i).getAeroporto().getPais().getCodigo().equals(pais.getCodigo())
-					&& nodes.get(i).getRota().getDistancia() < d && !visistados.contains(nodes.get(i))) {
-				n = nodes.get(i);
-				d = nodes.get(i).getRota().getDistancia();
+	public ArrayList<Node> getVerticesDoMesmoPais(Pais pais){
+		ArrayList<Node> vertices = new ArrayList<Node>();
+		for(int i=0; i<this.lv.size(); i++){
+			if(this.lv.get(i).getAeroporto().getPais().getCodigo().equals(pais.getCodigo())){
+				vertices.add(this.lv.get(i));
 			}
 		}
-		return n;
+		return vertices;
+	}
+	
+	/**
+	 * Algoritimo de dijsktra 
+	 * @param origem
+	 * @param destino
+	 * @param origemIndex
+	 * @param destinoIndex
+	 * @return
+	 */
+	public ArrayList<Caminho> dijsktra2(Aeroporto origem, Aeroporto destino, int origemIndex, int destinoIndex) {
+		ArrayList<Caminho> caminhos = new ArrayList<Caminho>();
+		ArrayList<Integer> visitados = new ArrayList<Integer>();
+		LinkedList<Node> adjacentes = this.obterAdjacentesDoMesmoPais(origem);
+		
+		visitados.add(this.findAirportIndex(origem.getCodigo()));
+		caminhos.add(new Caminho(origemIndex, 0, origemIndex));
+		
+		//Montar caminhos		
+		ArrayList<Integer> indexes = new ArrayList<Integer>();
+		for(int i=0; i<adjacentes.size(); i++){
+			Node a = adjacentes.get(i);
+			int index = this.findAirportIndex(a.getAeroporto().getCodigo());
+			indexes.add(index);
+			caminhos.add(new Caminho(index,a.getRota().getDistancia(),origemIndex));
+		}
+		
+		ArrayList<Node> vertices = this.getVerticesDoMesmoPais(origem.getPais());
+		for(int i=0; i<vertices .size(); i++){
+			//Se não é adjacente do aeroporto origem já adicionado
+			if(!indexes.contains(i)){
+				caminhos.add(new Caminho(this.findAirportIndex(vertices.get(i).getAeroporto().getCodigo()),Double.MAX_VALUE,origemIndex));
+			}
+		}
+		
+		//Percorrer todos os vertices do mesmo país
+		for(int i=0; i<lv.size(); i++){
+			//Se é do mesmo país e não é a origem
+			if(lv.get(i).getAeroporto().getPais().getCodigo().equals(origem.getPais().getCodigo()) && i!=origemIndex){
+				//Marca vertice U
+				visitados.add(i);
+				//Obtem adjacentes do vertice U
+				int indexU = this.findAirportIndex(lv.get(i).getAeroporto().getCodigo());
+				LinkedList<Node> adj = this.obterAdjacentesDoMesmoPais(origem);
+				
+				for(int j=0; j<adj.size(); j++){
+					if(!adj.get(j).getAeroporto().getCodigo().equals(origem.getCodigo())){
+						int indexZ = this.findAirportIndex(adj.get(j).getAeroporto().getCodigo());
+						//Se vertice Z não foi marcado
+						if(!visitados.contains(indexZ)){
+							//Peso do vertice U mais distancia de U->Z
+							int iU = this.getIndexFromCaminhosByVertice(indexU, caminhos);
+							int iZ = this.getIndexFromCaminhosByVertice(indexZ, caminhos);
+							if(iZ == -1){
+								iZ = -1;
+							}
+							if(iU == -1){
+								iU = -1;
+							}
+							double pesoUPlusRotaDistancia = caminhos.get(iU).peso+adj.get(j).getRota().getDistancia();
+							//Se (Peso do vertice U mais distancia de U->Z) < peso do vertice Z
+							if(pesoUPlusRotaDistancia < caminhos.get(iZ).peso){
+								//Atualiza peso do vertice Z e seu predecessor passa a ser o vertice U
+								caminhos.get(iZ).peso = pesoUPlusRotaDistancia;
+								caminhos.get(iZ).predecessor = indexU;
+							}
+						}
+					}
+				}
+			}
+		}		
+		return caminhos;
+	}
+	
+	public int getIndexFromCaminhosByVertice(int verticeIndex, ArrayList<Caminho> caminhos){
+		for(int i=0; i<caminhos.size(); i++){
+			if(caminhos.get(i).vertice == verticeIndex){
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	public ArrayList<Node> obterMenorRota(ArrayList<Caminho> caminhos, int origemIndex, int destinoIndex){
+		ArrayList<Node> vertices = new ArrayList<Node>();
+		vertices.add(lv.get(destinoIndex));
+		int predecessor = 0;
+		//Obter predecessor do vertice destino
+		for(int i=0; i<caminhos.size(); i++){
+			if(caminhos.get(i).vertice == destinoIndex){
+				predecessor = caminhos.get(i).predecessor;
+				break;
+			}
+		}
+		//Obter vertices ate a origem
+		while(predecessor != origemIndex){
+			for(int i=0; i<caminhos.size(); i++){
+				if(caminhos.get(i).vertice == predecessor){
+					int index = caminhos.get(i).vertice;
+					vertices.add(lv.get(index));
+					predecessor = caminhos.get(i).predecessor; 
+				}
+			}
+		}
+		vertices.add(this.lv.get(origemIndex));
+		return vertices;
 	}
 
 	/**
@@ -279,8 +316,8 @@ public class Grafo {
 	 */
 	public Aeroporto obterAeroportoPorCodigo(String codigo) {
 		for (int i = 0; i < this.lv.size(); i++) {
-			if (lv.get(i).getCodigo().equals(codigo)) {
-				return lv.get(i);
+			if (lv.get(i).getAeroporto().getCodigo().equals(codigo)) {
+				return lv.get(i).getAeroporto();
 			}
 		}
 		return null;
@@ -364,11 +401,11 @@ public class Grafo {
 		Aeroporto aeroporto = null;
 		int maiorGrauEntrada = 0;
 		for (int i = 0; i < this.lv.size(); i++) {
-			if (this.lv.get(i).getPais().getCodigo().equals(pais)) {
+			if (this.lv.get(i).getAeroporto().getPais().getCodigo().equals(pais)) {
 				int grauEntrada = this.grauDeEntrada(i);
 				if (grauEntrada > maiorGrauEntrada) {
 					maiorGrauEntrada = grauEntrada;
-					aeroporto = this.lv.get(i);
+					aeroporto = this.lv.get(i).getAeroporto();
 				}
 			}
 		}
