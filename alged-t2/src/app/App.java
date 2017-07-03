@@ -144,6 +144,7 @@ public class App{
 		} catch (InputMismatchException e) {
 			System.out.println("\nInformação inválida:\n");
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("\nOcorreu um erro:\n" + e.getMessage() + "\n");
 		}
 	}
