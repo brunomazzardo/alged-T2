@@ -18,12 +18,12 @@ public class Grafo {
 
 	private LinkedList<Node> menorRota;
 	private HashMap<Integer, Double> distancias;
-	
-	private class Caminho{
+
+	private class Caminho {
 		int vertice;
 		double peso;
 		int predecessor;
-		
+
 		public Caminho(int vertice, double peso, int predecessor) {
 			super();
 			this.vertice = vertice;
@@ -183,7 +183,7 @@ public class Grafo {
 		}
 		int origemIndex = this.findAirportIndex(origem.getCodigo());
 		int destinoIndex = this.findAirportIndex(destino.getCodigo());
-		
+
 		ArrayList<Caminho> caminhos = this.dijsktra2(origem, destino, origemIndex, destinoIndex);
 		return this.obterMenorRota(caminhos, origemIndex, destinoIndex);
 	}
@@ -193,18 +193,19 @@ public class Grafo {
 	 * @param pais
 	 * @return
 	 */
-	public ArrayList<Node> getVerticesDoMesmoPais(Pais pais){
+	public ArrayList<Node> getVerticesDoMesmoPais(Pais pais) {
 		ArrayList<Node> vertices = new ArrayList<Node>();
-		for(int i=0; i<this.lv.size(); i++){
-			if(this.lv.get(i).getAeroporto().getPais().getCodigo().equals(pais.getCodigo())){
+		for (int i = 0; i < this.lv.size(); i++) {
+			if (this.lv.get(i).getAeroporto().getPais().getCodigo().equals(pais.getCodigo())) {
 				vertices.add(this.lv.get(i));
 			}
 		}
 		return vertices;
 	}
-	
+
 	/**
-	 * Algoritimo de dijsktra 
+	 * Algoritimo de dijsktra
+	 * 
 	 * @param origem
 	 * @param destino
 	 * @param origemIndex
@@ -215,55 +216,59 @@ public class Grafo {
 		ArrayList<Caminho> caminhos = new ArrayList<Caminho>();
 		ArrayList<Integer> visitados = new ArrayList<Integer>();
 		LinkedList<Node> adjacentes = this.obterAdjacentesDoMesmoPais(origem);
-		
+
 		visitados.add(this.findAirportIndex(origem.getCodigo()));
 		caminhos.add(new Caminho(origemIndex, 0, origemIndex));
-		
-		//Montar caminhos		
+
+		// Montar caminhos
 		ArrayList<Integer> indexes = new ArrayList<Integer>();
-		for(int i=0; i<adjacentes.size(); i++){
+		for (int i = 0; i < adjacentes.size(); i++) {
 			Node a = adjacentes.get(i);
 			int index = this.findAirportIndex(a.getAeroporto().getCodigo());
 			indexes.add(index);
-			caminhos.add(new Caminho(index,a.getRota().getDistancia(),origemIndex));
+			caminhos.add(new Caminho(index, a.getRota().getDistancia(), origemIndex));
 		}
-		
+
 		ArrayList<Node> vertices = this.getVerticesDoMesmoPais(origem.getPais());
-		for(int i=0; i<vertices .size(); i++){
-			//Se não é adjacente do aeroporto origem já adicionado
-			if(!indexes.contains(i)){
-				caminhos.add(new Caminho(this.findAirportIndex(vertices.get(i).getAeroporto().getCodigo()),Double.MAX_VALUE,origemIndex));
+		for (int i = 0; i < vertices.size(); i++) {
+			// Se não é adjacente do aeroporto origem já adicionado
+			if (!indexes.contains(i)) {
+				caminhos.add(new Caminho(this.findAirportIndex(vertices.get(i).getAeroporto().getCodigo()),
+						Double.MAX_VALUE, origemIndex));
 			}
 		}
-		
-		//Percorrer todos os vertices do mesmo país
-		for(int i=0; i<lv.size(); i++){
-			//Se é do mesmo país e não é a origem
-			if(lv.get(i).getAeroporto().getPais().getCodigo().equals(origem.getPais().getCodigo()) && i!=origemIndex){
-				//Marca vertice U
+
+		// Percorrer todos os vertices do mesmo país
+		for (int i = 0; i < lv.size(); i++) {
+			// Se é do mesmo país e não é a origem
+			if (lv.get(i).getAeroporto().getPais().getCodigo().equals(origem.getPais().getCodigo())
+					&& i != origemIndex) {
+				// Marca vertice U
 				visitados.add(i);
-				//Obtem adjacentes do vertice U
+				// Obtem adjacentes do vertice U
 				int indexU = this.findAirportIndex(lv.get(i).getAeroporto().getCodigo());
 				LinkedList<Node> adj = this.obterAdjacentesDoMesmoPais(origem);
-				
-				for(int j=0; j<adj.size(); j++){
-					if(!adj.get(j).getAeroporto().getCodigo().equals(origem.getCodigo())){
+
+				for (int j = 0; j < adj.size(); j++) {
+					if (!adj.get(j).getAeroporto().getCodigo().equals(origem.getCodigo())) {
 						int indexZ = this.findAirportIndex(adj.get(j).getAeroporto().getCodigo());
-						//Se vertice Z não foi marcado
-						if(!visitados.contains(indexZ)){
-							//Peso do vertice U mais distancia de U->Z
+						// Se vertice Z não foi marcado
+						if (!visitados.contains(indexZ)) {
+							// Peso do vertice U mais distancia de U->Z
 							int iU = this.getIndexFromCaminhosByVertice(indexU, caminhos);
 							int iZ = this.getIndexFromCaminhosByVertice(indexZ, caminhos);
-							if(iZ == -1){
+							if (iZ == -1) {
 								iZ = -1;
 							}
-							if(iU == -1){
+							if (iU == -1) {
 								iU = -1;
 							}
-							double pesoUPlusRotaDistancia = caminhos.get(iU).peso+adj.get(j).getRota().getDistancia();
-							//Se (Peso do vertice U mais distancia de U->Z) < peso do vertice Z
-							if(pesoUPlusRotaDistancia < caminhos.get(iZ).peso){
-								//Atualiza peso do vertice Z e seu predecessor passa a ser o vertice U
+							double pesoUPlusRotaDistancia = caminhos.get(iU).peso + adj.get(j).getRota().getDistancia();
+							// Se (Peso do vertice U mais distancia de U->Z) <
+							// peso do vertice Z
+							if (pesoUPlusRotaDistancia < caminhos.get(iZ).peso) {
+								// Atualiza peso do vertice Z e seu predecessor
+								// passa a ser o vertice U
 								caminhos.get(iZ).peso = pesoUPlusRotaDistancia;
 								caminhos.get(iZ).predecessor = indexU;
 							}
@@ -271,37 +276,37 @@ public class Grafo {
 					}
 				}
 			}
-		}		
+		}
 		return caminhos;
 	}
-	
-	public int getIndexFromCaminhosByVertice(int verticeIndex, ArrayList<Caminho> caminhos){
-		for(int i=0; i<caminhos.size(); i++){
-			if(caminhos.get(i).vertice == verticeIndex){
+
+	public int getIndexFromCaminhosByVertice(int verticeIndex, ArrayList<Caminho> caminhos) {
+		for (int i = 0; i < caminhos.size(); i++) {
+			if (caminhos.get(i).vertice == verticeIndex) {
 				return i;
 			}
 		}
 		return -1;
 	}
-	
-	public ArrayList<Node> obterMenorRota(ArrayList<Caminho> caminhos, int origemIndex, int destinoIndex){
+
+	public ArrayList<Node> obterMenorRota(ArrayList<Caminho> caminhos, int origemIndex, int destinoIndex) {
 		ArrayList<Node> vertices = new ArrayList<Node>();
 		vertices.add(lv.get(destinoIndex));
 		int predecessor = 0;
-		//Obter predecessor do vertice destino
-		for(int i=0; i<caminhos.size(); i++){
-			if(caminhos.get(i).vertice == destinoIndex){
+		// Obter predecessor do vertice destino
+		for (int i = 0; i < caminhos.size(); i++) {
+			if (caminhos.get(i).vertice == destinoIndex) {
 				predecessor = caminhos.get(i).predecessor;
 				break;
 			}
 		}
-		//Obter vertices ate a origem
-		while(predecessor != origemIndex){
-			for(int i=0; i<caminhos.size(); i++){
-				if(caminhos.get(i).vertice == predecessor){
+		// Obter vertices ate a origem
+		while (predecessor != origemIndex) {
+			for (int i = 0; i < caminhos.size(); i++) {
+				if (caminhos.get(i).vertice == predecessor) {
 					int index = caminhos.get(i).vertice;
 					vertices.add(lv.get(index));
-					predecessor = caminhos.get(i).predecessor; 
+					predecessor = caminhos.get(i).predecessor;
 				}
 			}
 		}
@@ -340,7 +345,6 @@ public class Grafo {
 		}
 		return adj;
 	}
-	
 
 	/**
 	 * Verifica a possibilidade de fazer uma rota entre dois aeroportodos usando
@@ -351,114 +355,121 @@ public class Grafo {
 	 * @param ciaNome
 	 */
 	public ArrayList<Node> verificarRotaExclusiva(String ciaNome, String aeroporto1, String aeroporto2) {
-	
-			Aeroporto origem = this.obterAeroportoPorCodigo(aeroporto1);
-			Aeroporto destino = this.obterAeroportoPorCodigo(aeroporto2);
-			if (origem == null || destino == null) {
-				System.out.println("Aeroporto não encontrado.");
-				return null;
-			}
-			int origemIndex = this.findAirportIndex(origem.getCodigo());
-			int destinoIndex = this.findAirportIndex(destino.getCodigo());
-			
-			ArrayList<Caminho> caminhos = this.dijsktra2MesmaCia(origem, destino, origemIndex, destinoIndex,ciaNome);
-			return this.obterRotasDaCia(caminhos, origemIndex, destinoIndex,ciaNome);
-		
+
+		Aeroporto origem = this.obterAeroportoPorCodigo(aeroporto1);
+		Aeroporto destino = this.obterAeroportoPorCodigo(aeroporto2);
+		if (origem == null || destino == null) {
+			System.out.println("Aeroporto não encontrado.");
+			return null;
+		}
+		int origemIndex = this.findAirportIndex(origem.getCodigo());
+		int destinoIndex = this.findAirportIndex(destino.getCodigo());
+
+		ArrayList<Caminho> caminhos = this.dijsktra2MesmaCia(origem, destino, origemIndex, destinoIndex, ciaNome);
+		return this.obterRotasDaCia(caminhos, origemIndex, destinoIndex, ciaNome);
+
 	}
-	private ArrayList<Caminho> dijsktra2MesmaCia(Aeroporto origem, Aeroporto destino, int origemIndex,
-			int destinoIndex,String cia) {
+
+	private ArrayList<Caminho> dijsktra2MesmaCia(Aeroporto origem, Aeroporto destino, int origemIndex, int destinoIndex,
+			String cia) {
 		ArrayList<Caminho> caminhos = new ArrayList<Caminho>();
 		ArrayList<Integer> visitados = new ArrayList<Integer>();
 		LinkedList<Node> adjacentes = la.get(this.findAirportIndex(origem.getCodigo()));
-		
+
 		visitados.add(this.findAirportIndex(origem.getCodigo()));
 		caminhos.add(new Caminho(origemIndex, 0, origemIndex));
-		
-		//Montar caminhos		
+
+		// Montar caminhos
 		ArrayList<Integer> indexes = new ArrayList<Integer>();
-		for(int i=0; i<adjacentes.size(); i++){
+		for (int i = 0; i < adjacentes.size(); i++) {
 			Node a = adjacentes.get(i);
-			int index = this.findAirportIndex(a.getAeroporto().getCodigo());
-			indexes.add(index);
-			caminhos.add(new Caminho(index,a.getRota().getDistancia(),origemIndex));
+			int index = this.findAirportIndex(a.getAeroporto().getCodigo());	
+				indexes.add(index);
+				caminhos.add(new Caminho(index, a.getRota().getDistancia(), origemIndex));
+			
 		}
-		
+
 		ArrayList<Node> vertices = this.getVerticesDoMesmoPais(origem.getPais());
-		for(int i=0; i<vertices .size(); i++){
-			//Se não é adjacente do aeroporto origem já adicionado
-			if(!indexes.contains(i)){
-				if(vertices.get(i).getRota().getCia().getCodigo().equals(cia)){
-				caminhos.add(new Caminho(this.findAirportIndex(vertices.get(i).getAeroporto().getCodigo()),Double.MAX_VALUE,origemIndex));
-				
+		for (int i = 0; i < vertices.size(); i++) {
+			// Se não é adjacente do aeroporto origem já adicionado
+			if (vertices.get(i).getRota().getCia().getCodigo().equals(cia)) {
+				if (!indexes.contains(i)) {
+					caminhos.add(new Caminho(this.findAirportIndex(vertices.get(i).getAeroporto().getCodigo()),
+							Double.MAX_VALUE, origemIndex));
+
 				}
 			}
 		}
-		
-		
-		//Percorrer todos os vertices do mesmo país
-		
-		for(int i=0; i<lv.size(); i++){
-			//Se é do mesmo país e não é a origem
-			if( i!=origemIndex){
-				//Marca vertice U
+
+		// Percorrer todos os vertices do mesmo país
+
+		for (int i = 0; i < lv.size(); i++) {
+			// Se é do mesmo país e não é a origem
+			if (i != origemIndex) {
+				// Marca vertice U
 				visitados.add(i);
-				//Obtem adjacentes do vertice U
+				// Obtem adjacentes do vertice U
 				int indexU = this.findAirportIndex(lv.get(i).getAeroporto().getCodigo());
 				LinkedList<Node> adj = this.obterAdjacentesDoMesmoPais(origem);
-			
-				for(int j=0; j<adj.size(); j++){
-					if(!adj.get(j).getAeroporto().getCodigo().equals(origem.getCodigo())){
+
+				for (int j = 0; j < adj.size(); j++) {
+					if (!adj.get(j).getAeroporto().getCodigo().equals(origem.getCodigo())) {
 						int indexZ = this.findAirportIndex(adj.get(j).getAeroporto().getCodigo());
-						//Se vertice Z não foi marcado
-						if(!visitados.contains(indexZ)){
-							//Peso do vertice U mais distancia de U->Z
+						// Se vertice Z não foi marcado
+						if (!visitados.contains(indexZ)) {
+							// Peso do vertice U mais distancia de U->Z
 							int iU = this.getIndexFromCaminhosByVertice(indexU, caminhos);
 							int iZ = this.getIndexFromCaminhosByVertice(indexZ, caminhos);
-							if(iU!=-1 && iZ!=-1){
-							double pesoUPlusRotaDistancia = caminhos.get(iU).peso+adj.get(j).getRota().getDistancia();
 							
-							//Se (Peso do vertice U mais distancia de U->Z) < peso do vertice Z
-							if(pesoUPlusRotaDistancia < caminhos.get(iZ).peso){
-								//Atualiza peso do vertice Z e seu predecessor passa a ser o vertice U
-								caminhos.get(iZ).peso = pesoUPlusRotaDistancia;
-								caminhos.get(iZ).predecessor = indexU;
-							}
+							if (iU != -1 && iZ != -1) {
+								double pesoUPlusRotaDistancia = caminhos.get(iU).peso
+										+ adj.get(j).getRota().getDistancia();
+
+								// Se (Peso do vertice U mais distancia de U->Z)
+								// < peso do vertice Z
+								if (pesoUPlusRotaDistancia < caminhos.get(iZ).peso) {
+									// Atualiza peso do vertice Z e seu
+									// predecessor passa a ser o vertice U
+									caminhos.get(iZ).peso = pesoUPlusRotaDistancia;
+									caminhos.get(iZ).predecessor = indexU;
+								}
 							}
 						}
 					}
 				}
 			}
-		}		
+		}
 		return caminhos;
-		
+
 	}
 
-	private ArrayList<Node> obterRotasDaCia(ArrayList<Caminho> caminhos, int origemIndex, int destinoIndex,String cia) {
+	private ArrayList<Node> obterRotasDaCia(ArrayList<Caminho> caminhos, int origemIndex, int destinoIndex,
+			String cia) {
 		ArrayList<Node> vertices = new ArrayList<Node>();
 		vertices.add(lv.get(destinoIndex));
 		int predecessor = 0;
-		//Obter predecessor do vertice destino
-		for(int i=0; i<caminhos.size(); i++){
-			if(caminhos.get(i).vertice == destinoIndex){
+		// Obter predecessor do vertice destino
+		for (int i = 0; i < caminhos.size(); i++) {
+			if (caminhos.get(i).vertice == destinoIndex) {
 				predecessor = caminhos.get(i).predecessor;
 				break;
 			}
 		}
-		//Obter vertices ate a origem
-		while(predecessor != origemIndex){
-			for(int i=0; i<caminhos.size(); i++){
-				if(caminhos.get(i).vertice == predecessor){
+		// Obter vertices ate a origem
+		if(caminhos.size()>1){
+		while (predecessor != origemIndex) {
+			for (int i = 0; i < caminhos.size(); i++) {
+				if (caminhos.get(i).vertice == predecessor) {
 					int index = caminhos.get(i).vertice;
 					vertices.add(lv.get(index));
-					predecessor = caminhos.get(i).predecessor; 
+					predecessor = caminhos.get(i).predecessor;
 				}
 			}
+		}
 		}
 		vertices.add(this.lv.get(origemIndex));
 		return vertices;
 	}
-
-	
 
 	public boolean verificaAutonomiaVoo(double autonomia, String codCIA) {
 		int quantVoosCia = 0;
